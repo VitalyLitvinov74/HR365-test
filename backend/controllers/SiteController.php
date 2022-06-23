@@ -2,127 +2,72 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\filters\AccessControl;
-use yii\web\Controller;
-use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
+
+use app\models\companies\transport\TransportCompaniesBy;
+use app\models\media\ArrayMedia;
+use app\models\media\tables\TablePackages;
+use app\models\media\tables\TableTransportCompanies;
+use app\models\packages\FastPackage;
+use app\models\packages\PackageBy;
+use app\models\packages\SlowPackage;
+use app\models\packages\WithTransportCompanies;
+use yii\rest\Controller;
 
 class SiteController extends Controller
 {
     /**
-     * {@inheritdoc}
+     * Создает "быструю" посылку
      */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
+    public function actionCreateFastPackage(){
+        $package = new FastPackage(
+            'source',
+            'target',
+            25
+        );
+        $package->printTo(
+            new TablePackages()
+        );
+        return $package->printTo(
+            new ArrayMedia()
+        );
     }
 
     /**
-     * {@inheritdoc}
+     *  Создает "медленную" посылку
      */
-    public function actions()
+    public function actionCreateSlowPackage()
     {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
-        ];
+        $package = new SlowPackage('source', 'target', 25);
+        $package->printTo(
+            new TablePackages()
+        );
+        return $package->printTo(
+            new ArrayMedia()
+        );
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
-        return $this->render('index');
+     * Отображает стоимость одной посылки по разным ТК
+    */
+    public function actionShowShippingCost(){
+        $package = new WithTransportCompanies(
+            new PackageBy(
+                TablePackages::find()->where(['id'=>1])
+            ),
+            new TransportCompaniesBy(
+                TableTransportCompanies::find()->where(['productId'=>1])
+            )
+        );
+        return $package->printTo(
+            new ArrayMedia()
+        );
     }
 
     /**
-     * Login action.
-     *
-     * @return Response|string
+     * Отображает стоимость всех посылок, по ТК
      */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
+    public function actionSwohAllShippingCost(){
+        $packages = new PackagesBy();
+        return $packages->printTo(new ArrayMedia());
     }
 }
