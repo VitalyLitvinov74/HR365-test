@@ -11,6 +11,7 @@ use app\models\media\tables\TableTransportCompanies;
 use app\models\ObjectCollectionByRow;
 use app\models\ObjectsCollectionByQuery;
 use app\models\packages\FastPackage;
+use app\models\packages\PackageBefored;
 use app\models\packages\PackageBy;
 use app\models\packages\SlowPackage;
 use app\models\packages\WithTransportCompanies;
@@ -24,11 +25,15 @@ class SiteController extends Controller
      */
     public function actionCreateFastPackage()
     {
-        $package = new FastPackage(
-            'source',
-            'target',
-            rand(250,14508)
-        );
+        $package =
+            new PackageBefored(
+                new FastPackage(
+                    '7700000000000', //москва
+                    '7400000100000', //челябинск
+                    rand(2500, 15000)
+                ),
+                "18:00"
+            );
         return $package
             ->printTo(new TablePackages())
             ->attributesList();
@@ -39,7 +44,11 @@ class SiteController extends Controller
      */
     public function actionCreateSlowPackage()
     {
-        $package = new SlowPackage('source', 'target', rand(250,14508));
+        $package = new SlowPackage(
+            '7700000000000', //москва
+            '7400000100000', //челябинск
+            rand(2500, 15000)
+        );
         return $package
             ->printTo(new TablePackages())
             ->attributesList();
@@ -48,7 +57,7 @@ class SiteController extends Controller
     /**
      * Отображает стоимость всех посылок, по ТК
      */
-    public function actionSwohAllShippingCost()
+    public function actionShowAllShippingCost()
     {
         $collection =
             new ObjectsCollectionByQuery(
