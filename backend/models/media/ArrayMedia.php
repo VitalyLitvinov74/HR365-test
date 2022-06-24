@@ -21,7 +21,8 @@ class ArrayMedia implements IMedia
      */
     public function add(string $key, $value): IMedia
     {
-
+        $this->start[$key] = $value;
+        return $this;
     }
 
     /**
@@ -30,6 +31,16 @@ class ArrayMedia implements IMedia
      */
     public function commit(): IMedia
     {
+        return $this;
+    }
 
+    public function __toString()
+    {
+        return 'hello';
+    }
+
+    public function attributesList()
+    {
+        return $this->start;
     }
 }

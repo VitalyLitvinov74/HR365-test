@@ -15,6 +15,6 @@ class WithTransportCompanies implements Printed
 
     public function printTo(IMedia $print): IMedia
     {
-        // TODO: Implement printTo() method.
+        //добавить стоимость.
     }
 }

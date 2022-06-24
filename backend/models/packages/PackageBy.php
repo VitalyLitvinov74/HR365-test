@@ -16,7 +16,6 @@ class PackageBy implements IPackage
 
     }
 
-
     /**
      * @param IMedia $media - источник ифнормации куда необхимо записать данные о посылке
      * @return IMedia - источник информации с вписанными данными о посылке

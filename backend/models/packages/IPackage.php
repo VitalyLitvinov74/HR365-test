@@ -7,6 +7,10 @@ namespace app\models\packages;
 use app\models\media\IMedia;
 use app\models\media\Printed;
 
+/**
+ * Посылка умеет только печатать себя куда то.
+ * задачи о смене веса и пр. не стояло.
+ */
 interface IPackage extends Printed
 {
     /**
