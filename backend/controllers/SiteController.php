@@ -3,13 +3,17 @@
 namespace app\controllers;
 
 
+use app\models\companies\transport\Boxberry;
+use app\models\companies\transport\SDEK;
 use app\models\companies\transport\TransportCompaniesBy;
 use app\models\media\ArrayMedia;
 use app\models\media\tables\Table;
 use app\models\media\tables\TablePackages;
 use app\models\media\tables\TableTransportCompanies;
 use app\models\ObjectCollectionByRow;
+use app\models\ObjectsCollection;
 use app\models\ObjectsCollectionByQuery;
+use app\models\packages\DefaultPackage;
 use app\models\packages\FastPackage;
 use app\models\packages\PackageBefored;
 use app\models\packages\PackageBy;
@@ -61,23 +65,18 @@ class SiteController extends Controller
     {
         $collection =
             new ObjectsCollectionByQuery(
-                TablePackages::find()->with('transportCompanies'), //Условие для поиска, ленивый запрос
+                TablePackages::find(), //Условие для поиска, ленивый запрос
                 'packages', //тип объекта (это не фабрика)
                 function (TablePackages $package) { //указываем пример создания объекта для коллекции
-                    return new WithTransportCompanies(
-                        new FastPackage(
-                            $package->source_kladr,
-                            $package->target_kladr,
-                            $package->weight
-                        ),
-                        new ObjectCollectionByRow(
-                            $package->transportCompanies,
-                            'companies',
-                            function (TableTransportCompanies $transportCompany) {
-                                return new TransportCompaniesBy();
-                            }
-                        )
-                    );
+//                    return new WithTransportCompanies(
+//                        new DefaultPackage($package),
+//                        $package->type,
+//                        [
+//                            new Boxberry(),
+//                            new SDEK()
+//                        ]
+//                    );
+                    return new DefaultPackage($package);
                 }
             );
         return $collection

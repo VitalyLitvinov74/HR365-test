@@ -5,15 +5,15 @@ namespace app\models\packages;
 
 
 use app\models\media\IMedia;
-use yii\db\Query;
+use app\models\media\tables\TablePackages;
 
-class PackageBy implements IPackage
+class DefaultPackage implements IPackage
 {
-    private $query;
+    private $row;
 
-    public function __construct(Query $query)
+    public function __construct(TablePackages $row)
     {
-
+        $this->row = $row;
     }
 
     /**
@@ -22,6 +22,9 @@ class PackageBy implements IPackage
      */
     public function printTo(IMedia $media): IMedia
     {
-        // TODO: Implement printTo() method.
+        foreach ($this->row->getAttributes() as $key=>$attribute){
+            $media->add($key, $attribute);
+        }
+        return $media;
     }
 }

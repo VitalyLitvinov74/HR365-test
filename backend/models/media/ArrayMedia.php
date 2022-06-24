@@ -4,6 +4,8 @@
 namespace app\models\media;
 
 
+use yii\helpers\VarDumper;
+
 class ArrayMedia implements IMedia
 {
     private $start;
@@ -32,11 +34,6 @@ class ArrayMedia implements IMedia
     public function commit(): IMedia
     {
         return $this;
-    }
-
-    public function __toString()
-    {
-        return 'hello';
     }
 
     public function attributesList()
