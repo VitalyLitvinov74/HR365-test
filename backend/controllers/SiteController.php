@@ -5,11 +5,13 @@ namespace app\controllers;
 
 use app\models\companies\transport\Boxberry;
 use app\models\companies\transport\CDEK;
+use app\models\companies\transport\contracts\TransportCompaniesFactory;
 use app\models\companies\transport\TransportCompaniesBy;
 use app\models\media\ArrayMedia;
 use app\models\media\tables\Table;
 use app\models\media\tables\TablePackages;
 use app\models\media\tables\TableTransportCompanies;
+use app\models\media\WithError;
 use app\models\ObjectCollectionByRow;
 use app\models\ObjectsCollection;
 use app\models\ObjectsCollectionByQuery;
@@ -83,26 +85,72 @@ class SiteController extends Controller
                         $package->target_kladr,
                         $package->weight
                     );
-                    if ($package->type == 'slow'){
-                        return new WithPrintedSlowCost( //С распечатанной стоимостью
-                            new SlowPackage( //сделанная как медленное отправление
-                                $packageObj //дефолтная посылка
-                            ),
-                            [ //список компаний у которых нужно провести расчет стоимости
-                                new CDEK(),
-                                new Boxberry()
-                            ]
+                    $factory = new TransportCompaniesFactory();
+                    if ($package->type == 'slow') {
+                        return new WithError ( //Добавляем обработку ошибок
+                            new WithPrintedSlowCost( //С распечатанной стоимостью
+                                new SlowPackage( //сделанная как медленное отправление
+                                    $packageObj //дефолтная посылка
+                                ),
+                                $factory
+                            )
                         );
                     }
-                    return new WithPrintedFastCost( //с распечатанной стоимостью
-                        new FastPackage( //сделанная как быстрое отправление
-                            $packageObj // дефолтная посылка
-                        ),
-                        [
-                            new CDEK(),
-                            new Boxberry()
-                        ]
+                    return
+                        new WithError(
+                            new WithPrintedFastCost( //с распечатанной стоимостью
+                                new FastPackage( //сделанная как быстрое отправление
+                                    $packageObj // дефолтная посылка
+                                ),
+                                $factory
+                            )
+                        );
+                }
+            );
+        return $collection
+            ->printTo(new ArrayMedia())
+            ->attributesList();
+    }
+
+    /**
+     * Возращает стоимость всех посылок, в одной транспортной компании
+     */
+    public function actionShowShippingCost(string $needleCompany)
+    {
+        $collection =
+            new ObjectsCollectionByQuery(
+                TablePackages::find(),
+                'packages', //тип объекта (это не фабрика)
+                //указываем пример создания объекта для коллекции, это фабричный метод
+                function (TablePackages $package) use ($needleCompany) {
+                    $packageObj = new Package( //создаем дефолтный объект
+                        $package->source_kladr,
+                        $package->target_kladr,
+                        $package->weight
                     );
+                    $factory = new TransportCompaniesFactory([
+                        $needleCompany
+                    ]);
+                    if ($package->type == 'slow') {
+                        return
+                            new WithError( //Добавляем обработку ошибок
+                                new WithPrintedSlowCost( //С распечатанной стоимостью
+                                    new SlowPackage( //сделанная как медленное отправление
+                                        $packageObj //дефолтная посылка
+                                    ),
+                                    $factory
+                                )
+                            );
+                    }
+                    return
+                        new WithError( //добавляем обработку ошибок
+                            new WithPrintedFastCost( //с распечатанной стоимостью
+                                new FastPackage( //сделанная как быстрое отправление
+                                    $packageObj // дефолтная посылка
+                                ),
+                                $factory
+                            )
+                        );
                 }
             );
         return $collection

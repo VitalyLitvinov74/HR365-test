@@ -22,7 +22,7 @@ class Boxberry implements ITransportCompany
      */
     public function fastTarif(IPackage $package): float
     {
-       return rand();
+       return rand(300, 1450);
     }
 
     /**
@@ -31,6 +31,24 @@ class Boxberry implements ITransportCompany
      */
     public function slowTarif(IPackage $package): float
     {
-        // TODO: Implement slowTarif() method.
+        return rand(150, 300);
+    }
+
+    public function name(): string
+    {
+        return 'boxberry';
+    }
+
+    /**
+     * эмулируем запрос к тк
+     * @param IPackage $package
+     * @return integer- дата доставки в timestamp
+     * @throws \Exception
+     */
+    public function deliveryDate(IPackage $package): int
+    {
+        $dateTime = new \DateTime();
+        $dateTime = $dateTime->modify('+6 day');
+        return $dateTime->format('U');
     }
 }

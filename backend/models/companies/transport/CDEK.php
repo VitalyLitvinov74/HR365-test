@@ -33,4 +33,22 @@ class CDEK implements ITransportCompany
     {
         return rand(100, 300); //иммитуруем подключение к апи и получаем тариф на медленную посылку
     }
+
+    public function name(): string
+    {
+        return "СДЕК";
+    }
+
+    /**
+     * Эмулируем запрос к ТК
+     * @param IPackage $package
+     * @return integer- дата доставки в timestamp
+     * @throws \Exception
+     */
+    public function deliveryDate(IPackage $package): int
+    {
+        $dateTime = new \DateTime();
+        $dateTime = $dateTime->modify('+4 day');
+        return $dateTime->format('U');
+    }
 }

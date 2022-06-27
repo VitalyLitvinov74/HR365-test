@@ -4,6 +4,7 @@
 namespace app\models;
 
 
+use app\models\media\ArrayMedia;
 use app\models\media\IMedia;
 use app\models\media\Printed;
 use yii\db\Query;
@@ -27,7 +28,11 @@ class ObjectsCollectionByQuery implements Printed
     {
         $list = [];
         foreach ($this->query->each() as $record){
-            $list[] = call_user_func($this->exampleOfCreate, $record);
+            /**@var Printed $object*/
+            $object =  call_user_func($this->exampleOfCreate, $record);
+            /**@var ArrayMedia $printedObject*/
+            $printedObject = $object->printTo(new ArrayMedia());
+            $list[] = $printedObject->attributesList();
         }
         $print->add($this->objectsType, $list);
         return $print;

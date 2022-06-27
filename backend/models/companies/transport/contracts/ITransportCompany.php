@@ -19,4 +19,12 @@ interface ITransportCompany
      * @return float
      */
     public function slowTarif(IPackage $package): float;
+
+    /**
+     * @param IPackage $package
+     * @return integer- дата доставки в timestamp
+     */
+    public function deliveryDate(IPackage $package): int;
+
+    public function name(): string;
 }
