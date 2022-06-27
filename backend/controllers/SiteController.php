@@ -76,7 +76,10 @@ class SiteController extends Controller
 //                            new SDEK()
 //                        ]
 //                    );
-                    return new DefaultPackage($package);
+                    if($package->type == "slow"){
+                        return new SlowPackage();
+                    }
+                    return new FastPackage();
                 }
             );
         return $collection

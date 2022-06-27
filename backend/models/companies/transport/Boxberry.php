@@ -5,17 +5,32 @@ namespace app\models\companies\transport;
 
 
 use app\models\companies\transport\contracts\ITransportCompany;
+use app\models\media\ArrayMedia;
+use app\models\packages\IPackage;
 
 class Boxberry implements ITransportCompany
 {
-
-    public function fastTarif()
+    private $printedArray;
+    public function __construct()
     {
-        return rand(300, 1450); //иммитуруем подключение к апи и получаем тариф на бструю посылку
+        $this->printedArray = new ArrayMedia([]);
     }
 
-    public function slowTarif()
+    /**
+     * @param IPackage $package
+     * @return float
+     */
+    public function fastTarif(IPackage $package): float
     {
-        return rand(100, 300); //иммитуруем подключение к апи и получаем тариф на медленную посылку
+       return rand();
+    }
+
+    /**
+     * @param IPackage $package
+     * @return float
+     */
+    public function slowTarif(IPackage $package): float
+    {
+        // TODO: Implement slowTarif() method.
     }
 }
