@@ -7,8 +7,14 @@ namespace app\models\packages;
 use app\models\media\IMedia;
 use yii\helpers\VarDumper;
 
-class FastPackage extends BasePackage implements IPackage
+class FastPackage implements IPackage
 {
+    private $origin;
+
+    public function __construct(IPackage $package)
+    {
+        $this->origin = $package;
+    }
 
     /**
      * @param IMedia $media - источник ифнормации куда необхимо записать данные о посылке
@@ -16,11 +22,9 @@ class FastPackage extends BasePackage implements IPackage
      */
     public function printTo(IMedia $media): IMedia
     {
-        $media->add('weight', $this->weight)
-            ->add('source_kladr', $this->source)
-            ->add('target_kladr', $this->target)
-            ->add('type', 'fast')
-            ->commit();
-        return $media;
+        return
+            $this->origin
+                ->printTo($media)
+                ->add('type', 'fast');
     }
 }

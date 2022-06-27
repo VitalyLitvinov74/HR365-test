@@ -19,6 +19,4 @@ interface IMedia
      * @return IMedia
      */
     public function commit(): IMedia;
-
-    public function attributesList();
 }
