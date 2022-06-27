@@ -6,7 +6,7 @@ namespace app\models\companies\transport;
 
 use app\models\companies\transport\contracts\ITransportCompany;
 
-class SDEK implements ITransportCompany
+class CDEK implements ITransportCompany
 {
     private $baseUrl;
 

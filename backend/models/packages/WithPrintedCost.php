@@ -8,7 +8,7 @@ use app\models\companies\transport\contracts\ITransportCompany;
 use app\models\media\IMedia;
 use app\models\media\Printed;
 
-class WithTransportCompanies implements Printed
+class WithPrintedCost implements Printed
 {
 
     private $origin;

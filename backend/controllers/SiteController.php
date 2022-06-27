@@ -4,7 +4,7 @@ namespace app\controllers;
 
 
 use app\models\companies\transport\Boxberry;
-use app\models\companies\transport\SDEK;
+use app\models\companies\transport\CDEK;
 use app\models\companies\transport\TransportCompaniesBy;
 use app\models\media\ArrayMedia;
 use app\models\media\tables\Table;
@@ -18,7 +18,7 @@ use app\models\packages\FastPackage;
 use app\models\packages\PackageBefored;
 use app\models\packages\PackageBy;
 use app\models\packages\SlowPackage;
-use app\models\packages\WithTransportCompanies;
+use app\models\packages\WithPrintedCost;
 use yii\helpers\VarDumper;
 use yii\rest\Controller;
 
@@ -68,15 +68,15 @@ class SiteController extends Controller
                 TablePackages::find(), //Условие для поиска, ленивый запрос
                 'packages', //тип объекта (это не фабрика)
                 function (TablePackages $package) { //указываем пример создания объекта для коллекции
-//                    return new WithTransportCompanies(
-//                        new DefaultPackage($package),
-//                        $package->type,
-//                        [
-//                            new Boxberry(),
-//                            new SDEK()
-//                        ]
-//                    );
-                    return new DefaultPackage($package);
+
+
+                    return new WithPrintedCost(
+                        new DefaultPackage($package),
+                        [
+                            new CDEK(),
+                            new Boxberry()
+                        ]
+                    );
                 }
             );
         return $collection
