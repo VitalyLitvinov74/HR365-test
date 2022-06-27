@@ -20,10 +20,6 @@ class m220623_124355_addBaseTables extends Migration
             'weight'=>$this->integer()->comment('Вес в граммах'),
             'created'=>$this->timestamp()->defaultValue(new Expression('NOW()'))
         ]);
-        $this->createTable('transport_companies', [
-            'id'=>$this->primaryKey(),
-            'name'=>$this->string(),
-        ]);
     }
 
     /**
@@ -32,7 +28,6 @@ class m220623_124355_addBaseTables extends Migration
     public function safeDown()
     {
         $this->dropTable('packages');
-        $this->dropTable('transport_companies');
     }
 
     /*
